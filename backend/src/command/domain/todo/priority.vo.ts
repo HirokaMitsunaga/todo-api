@@ -1,13 +1,15 @@
 import { InvalidPriorityValueError } from './todo-error.js';
 
 export class PriorityVO {
+  private static readonly MIN = 1;
+  private static readonly MAX = 10;
   private readonly value: number;
   private constructor(value: number) {
     this.value = value;
   }
 
   public static create(value: number): PriorityVO {
-    if (value < 1 || value > 10) {
+    if (value < this.MIN || value > this.MAX) {
       throw new InvalidPriorityValueError(value);
     }
     return new PriorityVO(value);
