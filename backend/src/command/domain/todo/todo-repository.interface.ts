@@ -9,7 +9,6 @@ export type TodoParams = {
   status: TodoStatus;
   userId: EntityId;
   priority: PriorityVO;
-  workDate: Date; // 日付の扱いは DateUtil で正規化したものを渡す
 };
 
 export interface ITodoRepository {
