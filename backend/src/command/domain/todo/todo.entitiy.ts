@@ -1,6 +1,7 @@
 import { EntityId } from './entity-id.vo.js';
 import type { PriorityVO } from './priority.vo.js';
 import type { TitleVO } from './title.vo.js';
+import { InvalidTodoOwnerError, InvalidTodoStatusError } from './todo-error.js';
 import { TODO_STATUS, type TodoStatus } from './todo-status.js';
 
 type TodoParams = {
@@ -27,7 +28,7 @@ export class Todo {
 
   public static create({ title, status, userId, priority }: TodoParams): Todo {
     if (!Object.values(TODO_STATUS).includes(status)) {
-      throw new Error('Invalid status');
+      throw new InvalidTodoStatusError(status);
     }
     return new Todo({
       id: EntityId.generate(),
@@ -56,7 +57,7 @@ export class Todo {
 
   public update({ title, status, userId, priority }: TodoParams): Todo {
     if (!this.userId.equals(userId)) {
-      throw new Error('Todo owner cannot be changed');
+      throw new InvalidTodoOwnerError(this.userId, userId);
     }
 
     return new Todo({

@@ -1,3 +1,5 @@
+import { InvalidTitleValueError } from './todo-error.js';
+
 export class TitleVO {
   private readonly value: string;
   private constructor(value: string) {
@@ -6,7 +8,7 @@ export class TitleVO {
 
   public static create(value: string): TitleVO {
     if (value.length < 3 || value.length > 100) {
-      throw new Error('Title must be between 3 and 100 characters long');
+      throw new InvalidTitleValueError(value);
     }
     return new TitleVO(value);
   }

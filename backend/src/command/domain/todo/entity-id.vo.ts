@@ -1,11 +1,12 @@
 import { isValid, ulid } from 'ulid';
+import { InvalidEntityIdFormatError } from './todo-error.js';
 
 export class EntityId {
   private readonly entityId: string;
 
   private constructor({ entityId }: { entityId: string }) {
     if (!isValid(entityId)) {
-      throw new Error(`Invalid ID format: ${entityId}`);
+      throw new InvalidEntityIdFormatError(entityId);
     }
     this.entityId = entityId;
   }
