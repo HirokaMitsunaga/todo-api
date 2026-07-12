@@ -26,7 +26,12 @@ export class Todo {
     this.priority = priority;
   }
 
-  public static create({ title, status, userId, priority }: TodoParams): Todo {
+  public static create({
+    title,
+    status,
+    userId,
+    priority,
+  }: Omit<TodoParams, 'id'>): Todo {
     if (!Object.values(TODO_STATUS).includes(status)) {
       throw new InvalidTodoStatusError(status);
     }
@@ -55,7 +60,16 @@ export class Todo {
     });
   }
 
-  public update({ title, status, userId, priority }: TodoParams): Todo {
+  public update({
+    title,
+    status,
+    userId,
+    priority,
+  }: Omit<TodoParams, 'id'>): Todo {
+    if (!Object.values(TODO_STATUS).includes(status)) {
+      throw new InvalidTodoStatusError(status);
+    }
+
     if (!this.userId.equals(userId)) {
       throw new InvalidTodoOwnerError(this.userId, userId);
     }

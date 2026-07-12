@@ -5,7 +5,7 @@ import { PriorityVO } from './priority.vo.js';
 import { TitleVO } from './title.vo.js';
 import { InvalidTodoOwnerError, InvalidTodoStatusError } from './todo-error.js';
 import { TODO_STATUS, type TodoStatus } from './todo-status.js';
-import { Todo } from './todo.entitiy.js';
+import { Todo } from './todo.entity.js';
 
 const captureError = (action: () => void): unknown => {
   try {
@@ -28,7 +28,6 @@ describe('Todo', () => {
     '【正常系】有効なステータスでTodoを作成できる: %s',
     (status) => {
       const todo = Todo.create({
-        id: todoId,
         title: createTitle(),
         status,
         userId,
@@ -44,7 +43,6 @@ describe('Todo', () => {
 
     const error = captureError(() => {
       Todo.create({
-        id: todoId,
         title: createTitle(),
         status,
         userId,
@@ -68,7 +66,6 @@ describe('Todo', () => {
     });
 
     const updated = todo.update({
-      id: todoId,
       title: createTitle('after title'),
       status: TODO_STATUS.COMPLETED,
       userId,
@@ -79,6 +76,7 @@ describe('Todo', () => {
     expect(updated.getStatus()).toBe(TODO_STATUS.COMPLETED);
     expect(updated.getPriority().getValue()).toBe(8);
     expect(updated.getUserId().equals(userId)).toBe(true);
+    expect(updated.getId().equals(todoId)).toBe(true);
   });
 
   it('【異常系】所有者が異なるTodoは更新できない', () => {
@@ -92,7 +90,6 @@ describe('Todo', () => {
 
     const error = captureError(() => {
       todo.update({
-        id: todoId,
         title: createTitle('after title'),
         status: TODO_STATUS.COMPLETED,
         userId: otherUserId,

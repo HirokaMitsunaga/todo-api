@@ -16,7 +16,7 @@ export class User {
     this.email = email;
   }
 
-  public static create({ name, email }: UserParams): User {
+  public static create({ name, email }: Omit<UserParams, 'id'>): User {
     return new User({
       id: EntityId.generate(),
       name,
