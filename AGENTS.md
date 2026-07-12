@@ -30,3 +30,4 @@
 を最後にまとめて報告する。
 
 繰り返し利用する実装フローは `.codex/skills/feature-implementation/SKILL.md` を参照すること。
+テストを作成・更新・レビューする場合は、`.codex/skills/unit-testing/SKILL.md` を参照すること。
