@@ -13,7 +13,7 @@ export type TodoParams = {
 
 export interface ITodoRepository {
   findByUserId({ userId }: { userId: EntityId }): Promise<Todo | undefined>;
-  save(params: { todo: Todo }): Promise<void>;
+  create(params: { todo: Todo }): Promise<void>;
   update(params: { todo: Todo }): Promise<void>;
   delete(params: { todo: Todo }): Promise<void>;
 }

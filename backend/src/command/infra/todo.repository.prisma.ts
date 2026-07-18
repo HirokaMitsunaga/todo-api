@@ -30,7 +30,7 @@ export class TodoRepositoryPrisma implements ITodoRepository {
     });
   }
 
-  async save({ todo }: { todo: Todo }): Promise<void> {
+  async create({ todo }: { todo: Todo }): Promise<void> {
     await this.prisma.todo.create({
       data: {
         id: todo.getId().getEntityId(),
