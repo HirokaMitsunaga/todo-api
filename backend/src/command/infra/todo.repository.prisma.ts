@@ -8,14 +8,10 @@ import { NotFoundRepositoryError } from '../domain/todo/repository/todo-reposito
 export class TodoRepositoryPrisma implements ITodoRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findByUserId({
-    userId,
-  }: {
-    userId: EntityId;
-  }): Promise<Todo | undefined> {
+  async findById({ id }: { id: EntityId }): Promise<Todo | undefined> {
     const todoEntity = await this.prisma.todo.findFirst({
       where: {
-        userId: userId.getEntityId(),
+        id: id.getEntityId(),
       },
     });
     if (!todoEntity) {
