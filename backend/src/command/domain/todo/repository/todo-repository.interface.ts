@@ -1,8 +1,8 @@
-import { EntityId } from './entity-id.vo.js';
-import type { PriorityVO } from './priority.vo.js';
-import type { TitleVO } from './title.vo.js';
-import type { TodoStatus } from './todo-status.js';
-import { Todo } from './todo.entity.js';
+import { EntityId } from '../entity-id.vo.js';
+import type { PriorityVO } from '../priority.vo.js';
+import type { TitleVO } from '../title.vo.js';
+import type { TodoStatus } from '../todo-status.js';
+import { Todo } from '../todo.entity.js';
 
 export type TodoParams = {
   title: TitleVO;
