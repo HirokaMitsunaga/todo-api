@@ -11,7 +11,9 @@ import { ulid } from 'ulid';
 
 import { createApp } from '../../../app.js';
 
-process.loadEnvFile(new URL('../../../../.env', import.meta.url));
+if (!process.env.DATABASE_URL) {
+  process.loadEnvFile(new URL('../../../../.env', import.meta.url));
+}
 
 const { prisma } = await import('../../../prisma.js');
 
