@@ -4,31 +4,40 @@ type UserParams = {
   id: EntityId;
   name: string;
   email: string;
+  password: string;
 };
 
 export class User {
   private readonly id: EntityId;
   private readonly name: string;
   private readonly email: string;
-  private constructor({ id, name, email }: UserParams) {
+  private readonly password: string;
+  private constructor({ id, name, email, password }: UserParams) {
     this.id = id;
     this.name = name;
     this.email = email;
+    this.password = password;
   }
 
-  public static create({ name, email }: Omit<UserParams, 'id'>): User {
+  public static create({
+    name,
+    email,
+    password,
+  }: Omit<UserParams, 'id'>): User {
     return new User({
       id: EntityId.generate(),
       name,
       email,
+      password,
     });
   }
 
-  public static reconstruct({ id, name, email }: UserParams): User {
+  public static reconstruct({ id, name, email, password }: UserParams): User {
     return new User({
       id: EntityId.reconstruct({ entityId: id.getEntityId() }),
       name,
       email,
+      password,
     });
   }
 
@@ -38,6 +47,10 @@ export class User {
 
   getEmail(): string {
     return this.email;
+  }
+
+  getPassword(): string {
+    return this.password;
   }
 
   getId(): EntityId {
