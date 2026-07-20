@@ -8,10 +8,25 @@ import type {
 export class TodoQueryServicePrisma implements TodoQueryService {
   constructor(private readonly prisma: Pick<PrismaClient, 'todo'>) {}
 
-  async findAll({ limit, offset }: FindTodosInput): Promise<TodoReadModel[]> {
+  async findAllByUser({
+    userId,
+    limit,
+    offset,
+    title,
+  }: FindTodosInput): Promise<TodoReadModel[]> {
     const todos = await this.prisma.todo.findMany({
       take: limit,
       skip: offset,
+      where: {
+        userId,
+        ...(title
+          ? {
+              title: {
+                contains: title,
+              },
+            }
+          : {}),
+      },
       orderBy: {
         id: 'asc',
       },

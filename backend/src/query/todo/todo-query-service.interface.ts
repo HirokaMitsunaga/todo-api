@@ -10,10 +10,19 @@ export type TodoReadModel = {
 };
 
 export type FindTodosInput = {
+  userId: string;
   limit: number;
   offset: number;
+  title?: string;
+};
+
+export type ReadTodosInput = {
+  userId: string;
+  limit: number;
+  page: number;
+  title?: string;
 };
 
 export interface TodoQueryService {
-  findAll(input: FindTodosInput): Promise<TodoReadModel[]>;
+  findAllByUser(input: FindTodosInput): Promise<TodoReadModel[]>;
 }
