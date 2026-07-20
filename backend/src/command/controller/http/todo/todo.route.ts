@@ -3,6 +3,7 @@ import type { PrismaClient } from '@prisma/client';
 
 import { createTodoRoute } from './create-todo-route.js';
 import { updateTodoRoute } from './update-todo-route.js';
+import { deleteTodoRoute } from './delete-todo-route.js';
 import { CreateTodoUseCase } from '../../../usecase/todo/create-todo.use-case.js';
 import { TodoRepositoryPrisma } from '../../../infra/todo.repository.prisma.js';
 import { UserRepositoryPrisma } from '../../../infra/user.repository.prisma.js';
@@ -10,6 +11,7 @@ import { UpdateTodoUseCase } from '../../../usecase/todo/update-todo.use-case.js
 import { DomainError } from '../../../domain/domain-error.js';
 import { HTTPException } from 'hono/http-exception';
 import { NotFoundUsecaseError } from '../../../usecase/todo/todo-usecase-error.js';
+import { DeleteTodoUseCase } from '../../../usecase/todo/delete-todo.use-case.js';
 
 export const createTodoApp = ({
   prisma,
@@ -27,6 +29,7 @@ export const createTodoApp = ({
     todoRepository,
     userRepository,
   );
+  const deleteTodoUseCase = new DeleteTodoUseCase(todoRepository);
 
   todoApp.onError((error, c) => {
     if (error instanceof NotFoundUsecaseError) {
@@ -46,6 +49,7 @@ export const createTodoApp = ({
 
   createTodoRoute({ app: todoApp, createTodoUseCase });
   updateTodoRoute({ app: todoApp, updateTodoUseCase });
+  deleteTodoRoute({ app: todoApp, deleteTodoUseCase });
 
   return todoApp;
 };
