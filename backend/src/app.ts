@@ -1,4 +1,5 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
+import { swaggerUI } from '@hono/swagger-ui';
 import type { PrismaClient } from '@prisma/client';
 
 import { createTodoApp } from './command/controller/http/todo/todo.route.js';
@@ -17,6 +18,16 @@ export const createApp = (db: Pick<PrismaClient, 'todo' | 'user'>) => {
     console.error(error);
     return c.json({ message: 'Internal Server Error' }, 503);
   });
+
+  app.doc('/openapi.json', {
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'Todo API',
+    },
+    servers: [{ url: 'http://localhost:3000' }],
+  });
+  app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
   const todoApp = createTodoApp({ prisma: db });
   const userApp = createUserApp({ prisma: db });
