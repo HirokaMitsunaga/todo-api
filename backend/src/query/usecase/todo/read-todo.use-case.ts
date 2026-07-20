@@ -1,8 +1,14 @@
 import type {
   TodoQueryService,
   FindTodosOutput,
-  ReadTodosInput,
 } from '../../todo/todo-query-service.interface.js';
+
+export type ReadTodosInput = {
+  userId: string;
+  limit: number;
+  cursor?: string;
+  title?: string;
+};
 
 export class ReadTodoUseCase {
   constructor(private readonly todoQueryService: TodoQueryService) {}

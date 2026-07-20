@@ -21,13 +21,6 @@ export type FindTodosOutput = {
   nextCursor?: string;
 };
 
-export type ReadTodosInput = {
-  userId: string;
-  limit: number;
-  cursor?: string;
-  title?: string;
-};
-
 export interface TodoQueryService {
   findAllByUser({
     userId,
