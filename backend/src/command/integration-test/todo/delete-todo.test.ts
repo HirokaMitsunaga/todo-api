@@ -81,6 +81,19 @@ describe('delete-todo', () => {
     });
   });
 
+  it('【異常系】不正なTodo IDを指定すると400とエラー形式を返す', async () => {
+    const app = createApp(prisma);
+
+    const response = await app.request('/todos/invalid-id', {
+      method: 'DELETE',
+    });
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      message: 'Invalid ID format: invalid-id',
+    });
+  });
+
   //削除はidしか存在しないため、PostgreSQLトリガーで削除エラーを一時的に再現する
   it('【異常系】DBエラーが発生すると503とエラー形式を返す', async () => {
     const app = createApp(prisma);

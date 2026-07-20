@@ -17,6 +17,16 @@ const route = createRoute({
     204: {
       description: 'Todo deleted successfully',
     },
+    400: {
+      description: 'Invalid Todo ID format',
+      content: {
+        'application/json': {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+    },
     404: {
       description: 'Todo not found',
       content: {
