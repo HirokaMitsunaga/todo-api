@@ -60,9 +60,13 @@ describe('read-todo', () => {
     const app = createApp(prisma);
 
     const response = await app.request('/todos');
+    const body = (await response.json()) as {
+      todos: unknown[];
+      nextCursor?: string;
+    };
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual(
+    expect(body.todos).toEqual(
       expect.arrayContaining([
         {
           id: todoId,
@@ -76,13 +80,42 @@ describe('read-todo', () => {
     );
   });
 
-  it('【正常系】ページサイズを指定してTodoを取得する', async () => {
+  it('【正常系】カーソルを使って次のページのTodoを取得する', async () => {
     const app = createApp(prisma);
+    const secondTodoId = ulid();
+    await prisma.todo.create({
+      data: {
+        id: secondTodoId,
+        title: '次ページのTodo',
+        userId,
+        status: 'PENDING',
+        priority: 5,
+      },
+    });
 
-    const response = await app.request('/todos?limit=1&offset=0');
+    try {
+      const response = await app.request('/todos?limit=1');
+      const { todos, nextCursor } = (await response.json()) as {
+        todos: { id: string }[];
+        nextCursor?: string;
+      };
+      const nextResponse = await app.request(
+        `/todos?limit=1&cursor=${nextCursor}`,
+      );
+      const { todos: nextTodos } = (await nextResponse.json()) as {
+        todos: { id: string }[];
+        nextCursor?: string;
+      };
 
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toHaveLength(1);
+      expect(response.status).toBe(200);
+      expect(todos).toHaveLength(1);
+      expect(nextCursor).toEqual(expect.any(String));
+      expect(nextResponse.status).toBe(200);
+      expect(nextTodos).toHaveLength(1);
+      expect(nextTodos[0].id).not.toBe(todos[0].id);
+    } finally {
+      await prisma.todo.delete({ where: { id: secondTodoId } });
+    }
   });
 
   // PostgreSQLにはSELECTトリガーがないため、テーブル名を一時的に変更して取得エラーを再現する

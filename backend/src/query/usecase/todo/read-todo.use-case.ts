@@ -1,13 +1,13 @@
 import type {
   TodoQueryService,
   FindTodosInput,
-  TodoReadModel,
+  FindTodosOutput,
 } from '../../todo/todo-query-service.interface.js';
 
 export class ReadTodoUseCase {
   constructor(private readonly todoQueryService: TodoQueryService) {}
 
-  async execute(input: FindTodosInput): Promise<TodoReadModel[]> {
-    return await this.todoQueryService.findAll(input);
+  async execute({ limit, cursor }: FindTodosInput): Promise<FindTodosOutput> {
+    return await this.todoQueryService.findAll({ limit, cursor });
   }
 }

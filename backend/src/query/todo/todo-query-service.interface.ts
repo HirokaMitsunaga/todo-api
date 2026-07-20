@@ -1,6 +1,6 @@
 import type { TodoStatus } from '../../command/domain/todo/todo-status.js';
 
-export type TodoReadModel = {
+type TodoReadModel = {
   id: string;
   title: string;
   userId: string;
@@ -11,9 +11,14 @@ export type TodoReadModel = {
 
 export type FindTodosInput = {
   limit: number;
-  offset: number;
+  cursor?: string;
+};
+
+export type FindTodosOutput = {
+  todos: TodoReadModel[];
+  nextCursor?: string;
 };
 
 export interface TodoQueryService {
-  findAll(input: FindTodosInput): Promise<TodoReadModel[]>;
+  findAll({ limit, cursor }: FindTodosInput): Promise<FindTodosOutput>;
 }
