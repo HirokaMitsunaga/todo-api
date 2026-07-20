@@ -6,7 +6,7 @@ import type { EntityId } from '../../domain/todo/entity-id.vo.js';
 import type { PriorityVO } from '../../domain/todo/priority.vo.js';
 import type { IUserRepository } from '../../domain/user/repository/user-repository.interface.js';
 import { NotFoundRepositoryError } from '../../domain/user/repository/user-repository-error.js';
-import { NotFoundUsecaseError } from './todo-usecase-error.js';
+import { NotFoundUsecaseError } from '../usecase-error.js';
 
 type CreateTodoInput = {
   title: TitleVO;

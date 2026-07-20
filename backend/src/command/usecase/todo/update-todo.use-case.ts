@@ -6,7 +6,7 @@ import type { EntityId } from '../../domain/todo/entity-id.vo.js';
 import type { PriorityVO } from '../../domain/todo/priority.vo.js';
 import type { TitleVO } from '../../domain/todo/title.vo.js';
 import type { TodoStatus } from '../../domain/todo/todo-status.js';
-import { NotFoundUsecaseError } from './todo-usecase-error.js';
+import { NotFoundUsecaseError } from '../usecase-error.js';
 
 type UpdateTodoInput = {
   id: EntityId;

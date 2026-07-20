@@ -10,7 +10,7 @@ import { UserRepositoryPrisma } from '../../../infra/user.repository.prisma.js';
 import { UpdateTodoUseCase } from '../../../usecase/todo/update-todo.use-case.js';
 import { DomainError } from '../../../domain/domain-error.js';
 import { HTTPException } from 'hono/http-exception';
-import { NotFoundUsecaseError } from '../../../usecase/todo/todo-usecase-error.js';
+import { NotFoundUsecaseError } from '../../../usecase/usecase-error.js';
 import { DeleteTodoUseCase } from '../../../usecase/todo/delete-todo.use-case.js';
 
 export const createTodoCommandApp = ({
