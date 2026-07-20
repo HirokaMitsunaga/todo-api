@@ -1,7 +1,7 @@
 import type { ITodoRepository } from '../../domain/todo/repository/todo-repository.interface.js';
-import { NotFoundRepositoryError } from '../../domain/todo/repository/todo-repository-error.js';
+import { NotFoundRepositoryError } from '../../domain/repository-error.js';
 import type { EntityId } from '../../domain/todo/entity-id.vo.js';
-import { NotFoundUsecaseError } from './todo-usecase-error.js';
+import { NotFoundUsecaseError } from '../usecase-error.js';
 
 type DeleteTodoInput = {
   id: EntityId;
@@ -21,7 +21,7 @@ export class DeleteTodoUseCase {
       await this.todoRepository.delete({ todo });
     } catch (error: unknown) {
       if (error instanceof NotFoundRepositoryError) {
-        throw new NotFoundUsecaseError('ToDo', id, {
+        throw new NotFoundUsecaseError(error.resource, error.entityId, {
           cause: error,
         });
       }

@@ -1,7 +1,7 @@
 import type { EntityId } from '../../domain/todo/entity-id.vo.js';
-import { NotFoundRepositoryError } from '../../domain/user/repository/user-repository-error.js';
+import { NotFoundRepositoryError } from '../../domain/repository-error.js';
 import type { IUserRepository } from '../../domain/user/repository/user-repository.interface.js';
-import { NotFoundUsecaseError } from './user-usecase-error.js';
+import { NotFoundUsecaseError } from '../usecase-error.js';
 
 type UpdateUserInput = {
   id: EntityId;
@@ -17,7 +17,7 @@ export class UpdateUserUseCase {
     const user = await this.userRepository.findById({ id });
 
     if (!user) {
-      throw new NotFoundUsecaseError(id);
+      throw new NotFoundUsecaseError('User', id);
     }
 
     try {
@@ -26,7 +26,9 @@ export class UpdateUserUseCase {
       });
     } catch (error: unknown) {
       if (error instanceof NotFoundRepositoryError) {
-        throw new NotFoundUsecaseError(id, { cause: error });
+        throw new NotFoundUsecaseError(error.resource, error.entityId, {
+          cause: error,
+        });
       }
       throw error;
     }
