@@ -8,7 +8,12 @@ import type {
 export class TodoQueryServicePrisma implements TodoQueryService {
   constructor(private readonly prisma: Pick<PrismaClient, 'todo'>) {}
 
-  async findAll({ limit, cursor }: FindTodosInput): Promise<FindTodosOutput> {
+  async findAllByUser({
+    userId,
+    limit,
+    cursor,
+    title,
+  }: FindTodosInput): Promise<FindTodosOutput> {
     const todos = await this.prisma.todo.findMany({
       take: limit + 1,
       ...(cursor
@@ -17,6 +22,16 @@ export class TodoQueryServicePrisma implements TodoQueryService {
             skip: 1,
           }
         : {}),
+      where: {
+        userId,
+        ...(title
+          ? {
+              title: {
+                contains: title,
+              },
+            }
+          : {}),
+      },
       orderBy: {
         id: 'asc',
       },

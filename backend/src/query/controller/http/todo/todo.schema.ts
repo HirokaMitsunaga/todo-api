@@ -24,6 +24,12 @@ export const TodoResponseSchema = z
   .openapi('TodoResponse');
 
 export const TodoRequestSchema = z.object({
+  userId: z.ulid().openapi({
+    example: '01J123456789ABCDEFGHJKMNPQ',
+  }),
+  title: z.string().optional().openapi({
+    example: '牛乳',
+  }),
   limit: z.coerce.number().int().min(1).max(100).default(20).openapi({
     example: 20,
   }),

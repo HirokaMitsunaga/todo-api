@@ -4,8 +4,7 @@ import { EntityId } from '../domain/todo/entity-id.vo.js';
 import { PriorityVO } from '../domain/todo/priority.vo.js';
 import { Todo } from '../domain/todo/todo.entity.js';
 import { TitleVO } from '../domain/todo/title.vo.js';
-import { NotFoundRepositoryError } from '../domain/todo/repository/todo-repository-error.js';
-import { NotFoundRepositoryError as UserNotFoundRepositoryError } from '../domain/user/repository/user-repository-error.js';
+import { NotFoundRepositoryError } from '../domain/repository-error.js';
 export class TodoRepositoryPrisma implements ITodoRepository {
   constructor(private readonly prisma: Pick<PrismaClient, 'todo'>) {}
 
@@ -84,7 +83,7 @@ export class TodoRepositoryPrisma implements ITodoRepository {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2025'
     ) {
-      throw new NotFoundRepositoryError(entityId, {
+      throw new NotFoundRepositoryError('ToDo', entityId, {
         cause: error,
       });
     }
@@ -93,7 +92,7 @@ export class TodoRepositoryPrisma implements ITodoRepository {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2003'
     ) {
-      throw new UserNotFoundRepositoryError(entityId, {
+      throw new NotFoundRepositoryError('User', entityId, {
         cause: error,
       });
     }

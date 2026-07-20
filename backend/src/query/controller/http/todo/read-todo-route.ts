@@ -39,10 +39,12 @@ export const readTodoRoute = ({
   readTodoUseCase: ReadTodoUseCase;
 }) => {
   app.openapi(route, async (c) => {
-    const { limit, cursor } = c.req.valid('query');
+    const { userId, limit, cursor, title } = c.req.valid('query');
     const { todos, nextCursor } = await readTodoUseCase.execute({
+      userId,
       limit,
       cursor,
+      title,
     });
 
     return c.json(

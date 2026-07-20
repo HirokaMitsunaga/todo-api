@@ -1,7 +1,7 @@
 import { Prisma, type PrismaClient } from '@prisma/client';
 import { EntityId } from '../domain/todo/entity-id.vo.js';
 import { User } from '../domain/user/user.entity.js';
-import { NotFoundRepositoryError } from '../domain/user/repository/user-repository-error.js';
+import { NotFoundRepositoryError } from '../domain/repository-error.js';
 import type { IUserRepository } from '../domain/user/repository/user-repository.interface.js';
 
 export class UserRepositoryPrisma implements IUserRepository {
@@ -24,7 +24,7 @@ export class UserRepositoryPrisma implements IUserRepository {
     });
   }
 
-  async findAll(): Promise<User[]> {
+  async findAllByUser(): Promise<User[]> {
     const userEntities = await this.prisma.user.findMany();
 
     return userEntities.map((userEntity) =>
@@ -88,7 +88,7 @@ export class UserRepositoryPrisma implements IUserRepository {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2025'
     ) {
-      throw new NotFoundRepositoryError(entityId, {
+      throw new NotFoundRepositoryError('User', entityId, {
         cause: error,
       });
     }

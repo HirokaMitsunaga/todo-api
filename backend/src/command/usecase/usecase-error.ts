@@ -1,4 +1,4 @@
-import type { EntityId } from '../../domain/todo/entity-id.vo.js';
+import type { EntityId } from '../domain/todo/entity-id.vo.js';
 
 export abstract class UsecaseError extends Error {
   protected constructor(message: string, options?: ErrorOptions) {
@@ -9,7 +9,7 @@ export abstract class UsecaseError extends Error {
 }
 
 export class NotFoundUsecaseError extends UsecaseError {
-  constructor(resoure: string, entityId: EntityId, options?: ErrorOptions) {
-    super(`${resoure}: ${entityId.getEntityId()} not found`, options);
+  constructor(resource: string, entityId: EntityId, options?: ErrorOptions) {
+    super(`${resource}: ${entityId.getEntityId()} not found`, options);
   }
 }

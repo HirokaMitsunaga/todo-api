@@ -1,4 +1,4 @@
-import type { EntityId } from '../../todo/entity-id.vo.js';
+import type { EntityId } from './todo/entity-id.vo.js';
 
 export abstract class RepositoryError extends Error {
   protected constructor(message: string, options?: ErrorOptions) {
@@ -9,7 +9,11 @@ export abstract class RepositoryError extends Error {
 }
 
 export class NotFoundRepositoryError extends RepositoryError {
-  constructor(entityId: EntityId, options?: ErrorOptions) {
-    super(`User ${entityId.getEntityId()} not found`, options);
+  constructor(
+    public readonly resource: string,
+    public readonly entityId: EntityId,
+    options?: ErrorOptions,
+  ) {
+    super(`${resource}: ${entityId.getEntityId()} not found`, options);
   }
 }
