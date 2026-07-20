@@ -40,11 +40,12 @@ export const readTodoRoute = ({
 
     return c.json(
       todos.map((todo) => ({
-        id: todo.getId().getEntityId(),
-        title: todo.getTitle().getValue(),
-        userId: todo.getUserId().getEntityId(),
-        status: todo.getStatus(),
-        priority: todo.getPriority().getValue(),
+        id: todo.id,
+        title: todo.title,
+        userId: todo.userId,
+        status: todo.status,
+        priority: todo.priority,
+        updatedAt: todo.updatedAt.toISOString(),
       })),
       200,
     );

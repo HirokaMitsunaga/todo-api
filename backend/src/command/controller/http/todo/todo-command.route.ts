@@ -12,15 +12,13 @@ import { DomainError } from '../../../domain/domain-error.js';
 import { HTTPException } from 'hono/http-exception';
 import { NotFoundUsecaseError } from '../../../usecase/todo/todo-usecase-error.js';
 import { DeleteTodoUseCase } from '../../../usecase/todo/delete-todo.use-case.js';
-import { ReadTodoUseCase } from '../../../usecase/todo/read-todo.use-case.js';
-import { readTodoRoute } from './read-todo-route.js';
 
-export const createTodoApp = ({
+export const createTodoCommandApp = ({
   prisma,
 }: {
   prisma: Pick<PrismaClient, 'todo' | 'user'>;
 }) => {
-  const todoApp = new OpenAPIHono();
+  const todoCommandApp = new OpenAPIHono();
   const todoRepository = new TodoRepositoryPrisma(prisma);
   const userRepository = new UserRepositoryPrisma(prisma);
   const createTodoUseCase = new CreateTodoUseCase(
@@ -32,9 +30,8 @@ export const createTodoApp = ({
     userRepository,
   );
   const deleteTodoUseCase = new DeleteTodoUseCase(todoRepository);
-  const readTodoUseCase = new ReadTodoUseCase(todoRepository);
 
-  todoApp.onError((error, c) => {
+  todoCommandApp.onError((error, c) => {
     if (error instanceof NotFoundUsecaseError) {
       return c.json({ message: error.message }, 404);
     }
@@ -50,10 +47,9 @@ export const createTodoApp = ({
     throw error;
   });
 
-  createTodoRoute({ app: todoApp, createTodoUseCase });
-  readTodoRoute({ app: todoApp, readTodoUseCase });
-  updateTodoRoute({ app: todoApp, updateTodoUseCase });
-  deleteTodoRoute({ app: todoApp, deleteTodoUseCase });
+  createTodoRoute({ app: todoCommandApp, createTodoUseCase });
+  updateTodoRoute({ app: todoCommandApp, updateTodoUseCase });
+  deleteTodoRoute({ app: todoCommandApp, deleteTodoUseCase });
 
-  return todoApp;
+  return todoCommandApp;
 };

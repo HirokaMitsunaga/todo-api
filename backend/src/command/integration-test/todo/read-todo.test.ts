@@ -20,6 +20,7 @@ const { prisma } = await import('../../../prisma.js');
 describe('read-todo', () => {
   const userId = ulid();
   let todoId: string;
+  let updatedAt: Date;
 
   beforeAll(async () => {
     await prisma.user.create({
@@ -34,7 +35,7 @@ describe('read-todo', () => {
 
   beforeEach(async () => {
     todoId = ulid();
-    await prisma.todo.create({
+    const todo = await prisma.todo.create({
       data: {
         id: todoId,
         title: '取得対象のTodo',
@@ -43,6 +44,7 @@ describe('read-todo', () => {
         priority: 5,
       },
     });
+    updatedAt = todo.updatedAt;
   });
 
   afterEach(async () => {
@@ -68,6 +70,7 @@ describe('read-todo', () => {
           userId,
           status: 'PENDING',
           priority: 5,
+          updatedAt: updatedAt.toISOString(),
         },
       ]),
     );

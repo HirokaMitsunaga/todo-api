@@ -3,7 +3,6 @@ import { Todo } from '../todo.entity.js';
 
 export interface ITodoRepository {
   findById({ id }: { id: EntityId }): Promise<Todo | undefined>;
-  findAll(): Promise<Todo[]>;
   create(params: { todo: Todo }): Promise<void>;
   update(params: { todo: Todo }): Promise<void>;
   delete(params: { todo: Todo }): Promise<void>;
