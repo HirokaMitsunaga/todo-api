@@ -1,7 +1,6 @@
 import type { ITodoRepository } from '../../domain/todo/repository/todo-repository.interface.js';
-import { NotFoundRepositoryError } from '../../domain/todo/repository/todo-repository-error.js';
+import { NotFoundRepositoryError } from '../../domain/repository-error.js';
 import type { IUserRepository } from '../../domain/user/repository/user-repository.interface.js';
-import { NotFoundRepositoryError as UserNotFoundRepositoryError } from '../../domain/user/repository/user-repository-error.js';
 import type { EntityId } from '../../domain/todo/entity-id.vo.js';
 import type { PriorityVO } from '../../domain/todo/priority.vo.js';
 import type { TitleVO } from '../../domain/todo/title.vo.js';
@@ -46,12 +45,7 @@ export class UpdateTodoUseCase {
       await this.todoRepository.update({ todo: updatedTodo });
     } catch (error: unknown) {
       if (error instanceof NotFoundRepositoryError) {
-        throw new NotFoundUsecaseError('ToDo', id, {
-          cause: error,
-        });
-      }
-      if (error instanceof UserNotFoundRepositoryError) {
-        throw new NotFoundUsecaseError('User', userId, {
+        throw new NotFoundUsecaseError(error.resource, error.entityId, {
           cause: error,
         });
       }

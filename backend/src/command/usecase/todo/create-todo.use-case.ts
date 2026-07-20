@@ -5,7 +5,7 @@ import type { TodoStatus } from '../../domain/todo/todo-status.js';
 import type { EntityId } from '../../domain/todo/entity-id.vo.js';
 import type { PriorityVO } from '../../domain/todo/priority.vo.js';
 import type { IUserRepository } from '../../domain/user/repository/user-repository.interface.js';
-import { NotFoundRepositoryError } from '../../domain/user/repository/user-repository-error.js';
+import { NotFoundRepositoryError } from '../../domain/repository-error.js';
 import { NotFoundUsecaseError } from '../usecase-error.js';
 
 type CreateTodoInput = {
@@ -38,7 +38,7 @@ export class CreateTodoUseCase {
       });
     } catch (error: unknown) {
       if (error instanceof NotFoundRepositoryError) {
-        throw new NotFoundUsecaseError('User', userId, {
+        throw new NotFoundUsecaseError(error.resource, error.entityId, {
           cause: error,
         });
       }
