@@ -12,6 +12,8 @@ import { DomainError } from '../../../domain/domain-error.js';
 import { HTTPException } from 'hono/http-exception';
 import { NotFoundUsecaseError } from '../../../usecase/todo/todo-usecase-error.js';
 import { DeleteTodoUseCase } from '../../../usecase/todo/delete-todo.use-case.js';
+import { ReadTodoUseCase } from '../../../usecase/todo/read-todo.use-case.js';
+import { readTodoRoute } from './read-todo-route.js';
 
 export const createTodoApp = ({
   prisma,
@@ -30,6 +32,7 @@ export const createTodoApp = ({
     userRepository,
   );
   const deleteTodoUseCase = new DeleteTodoUseCase(todoRepository);
+  const readTodoUseCase = new ReadTodoUseCase(todoRepository);
 
   todoApp.onError((error, c) => {
     if (error instanceof NotFoundUsecaseError) {
@@ -48,6 +51,7 @@ export const createTodoApp = ({
   });
 
   createTodoRoute({ app: todoApp, createTodoUseCase });
+  readTodoRoute({ app: todoApp, readTodoUseCase });
   updateTodoRoute({ app: todoApp, updateTodoUseCase });
   deleteTodoRoute({ app: todoApp, deleteTodoUseCase });
 
