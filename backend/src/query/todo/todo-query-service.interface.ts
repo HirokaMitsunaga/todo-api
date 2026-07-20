@@ -9,6 +9,11 @@ export type TodoReadModel = {
   updatedAt: Date;
 };
 
+export type FindTodosInput = {
+  limit: number;
+  offset: number;
+};
+
 export interface TodoQueryService {
-  findAll(): Promise<TodoReadModel[]>;
+  findAll(input: FindTodosInput): Promise<TodoReadModel[]>;
 }

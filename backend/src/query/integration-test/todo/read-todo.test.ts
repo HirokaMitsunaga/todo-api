@@ -76,6 +76,15 @@ describe('read-todo', () => {
     );
   });
 
+  it('【正常系】ページサイズを指定してTodoを取得する', async () => {
+    const app = createApp(prisma);
+
+    const response = await app.request('/todos?limit=1&offset=0');
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toHaveLength(1);
+  });
+
   // PostgreSQLにはSELECTトリガーがないため、テーブル名を一時的に変更して取得エラーを再現する
   it('【異常系】DBエラーが発生すると503とエラー形式を返す', async () => {
     const app = createApp(prisma);
