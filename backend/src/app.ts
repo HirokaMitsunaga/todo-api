@@ -2,8 +2,9 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import type { PrismaClient } from '@prisma/client';
 
-import { createTodoApp } from './command/controller/http/todo/todo.route.js';
+import { createTodoCommandApp } from './command/controller/http/todo/todo-command.route.js';
 import { createUserApp } from './command/controller/http/user/user.route.js';
+import { createTodoQueryApp } from './query/controller/http/todo/todo-query.route.js';
 
 export const createApp = (db: Pick<PrismaClient, 'todo' | 'user'>) => {
   const app = new OpenAPIHono({
@@ -29,9 +30,11 @@ export const createApp = (db: Pick<PrismaClient, 'todo' | 'user'>) => {
   });
   app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
-  const todoApp = createTodoApp({ prisma: db });
+  const todoCommandApp = createTodoCommandApp({ prisma: db });
+  const todoQueryApp = createTodoQueryApp({ prisma: db });
   const userApp = createUserApp({ prisma: db });
-  app.route('/todos', todoApp);
+  app.route('/todos', todoCommandApp);
+  app.route('/todos', todoQueryApp);
   app.route('/users', userApp);
 
   return app;

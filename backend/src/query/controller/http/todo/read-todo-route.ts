@@ -1,11 +1,14 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 
 import type { ReadTodoUseCase } from '../../../usecase/todo/read-todo.use-case.js';
-import { TodoResponseSchema } from './todo.schema.js';
+import { TodoRequestSchema, TodoResponseSchema } from './todo.schema.js';
 
 const route = createRoute({
   method: 'get',
   path: '/',
+  request: {
+    query: TodoRequestSchema,
+  },
   responses: {
     200: {
       description: 'Todos retrieved successfully',
@@ -36,15 +39,17 @@ export const readTodoRoute = ({
   readTodoUseCase: ReadTodoUseCase;
 }) => {
   app.openapi(route, async (c) => {
-    const todos = await readTodoUseCase.execute();
+    const { limit, offset } = c.req.valid('query');
+    const todos = await readTodoUseCase.execute({ limit, offset });
 
     return c.json(
       todos.map((todo) => ({
-        id: todo.getId().getEntityId(),
-        title: todo.getTitle().getValue(),
-        userId: todo.getUserId().getEntityId(),
-        status: todo.getStatus(),
-        priority: todo.getPriority().getValue(),
+        id: todo.id,
+        title: todo.title,
+        userId: todo.userId,
+        status: todo.status,
+        priority: todo.priority,
+        updatedAt: todo.updatedAt.toISOString(),
       })),
       200,
     );
