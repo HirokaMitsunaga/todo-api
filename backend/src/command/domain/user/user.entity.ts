@@ -41,6 +41,15 @@ export class User {
     });
   }
 
+  public update({ name, email, password }: Omit<UserParams, 'id'>): User {
+    return new User({
+      id: this.id,
+      name,
+      email,
+      password,
+    });
+  }
+
   getName(): string {
     return this.name;
   }

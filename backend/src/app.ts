@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import type { PrismaClient } from '@prisma/client';
 
 import { createTodoApp } from './command/controller/http/todo/todo.route.js';
+import { createUserApp } from './command/controller/http/user/user.route.js';
 
 export const createApp = (db: Pick<PrismaClient, 'todo' | 'user'>) => {
   const app = new OpenAPIHono({
@@ -18,7 +19,9 @@ export const createApp = (db: Pick<PrismaClient, 'todo' | 'user'>) => {
   });
 
   const todoApp = createTodoApp({ prisma: db });
+  const userApp = createUserApp({ prisma: db });
   app.route('/todos', todoApp);
+  app.route('/users', userApp);
 
   return app;
 };
