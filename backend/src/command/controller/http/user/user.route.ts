@@ -10,6 +10,8 @@ import { NotFoundUsecaseError } from '../../../usecase/user/user-usecase-error.j
 import { UpdateUserUseCase } from '../../../usecase/user/update-user.use-case.js';
 import { createUserRoute } from './create-user-route.js';
 import { deleteUserRoute } from './delete-user-route.js';
+import { ReadUserUseCase } from '../../../usecase/user/read-user.use-case.js';
+import { readUserRoute } from './read-user-route.js';
 import { updateUserRoute } from './update-user-route.js';
 
 export const createUserApp = ({
@@ -36,6 +38,10 @@ export const createUserApp = ({
   createUserRoute({
     app: userApp,
     createUserUseCase: new CreateUserUseCase(userRepository),
+  });
+  readUserRoute({
+    app: userApp,
+    readUserUseCase: new ReadUserUseCase(userRepository),
   });
   updateUserRoute({
     app: userApp,

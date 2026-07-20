@@ -24,6 +24,19 @@ export class UserRepositoryPrisma implements IUserRepository {
     });
   }
 
+  async findAll(): Promise<User[]> {
+    const userEntities = await this.prisma.user.findMany();
+
+    return userEntities.map((userEntity) =>
+      User.reconstruct({
+        id: EntityId.reconstruct({ entityId: userEntity.id }),
+        name: userEntity.name,
+        email: userEntity.email,
+        password: userEntity.password,
+      }),
+    );
+  }
+
   async create({ user }: { user: User }): Promise<void> {
     await this.prisma.user.create({
       data: {
