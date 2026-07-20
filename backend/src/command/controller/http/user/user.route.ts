@@ -5,9 +5,11 @@ import { HTTPException } from 'hono/http-exception';
 import { DomainError } from '../../../domain/domain-error.js';
 import { UserRepositoryPrisma } from '../../../infra/user.repository.prisma.js';
 import { CreateUserUseCase } from '../../../usecase/user/create-user.use-case.js';
+import { DeleteUserUseCase } from '../../../usecase/user/delete-user.use-case.js';
 import { NotFoundUsecaseError } from '../../../usecase/user/user-usecase-error.js';
 import { UpdateUserUseCase } from '../../../usecase/user/update-user.use-case.js';
 import { createUserRoute } from './create-user-route.js';
+import { deleteUserRoute } from './delete-user-route.js';
 import { updateUserRoute } from './update-user-route.js';
 
 export const createUserApp = ({
@@ -38,6 +40,10 @@ export const createUserApp = ({
   updateUserRoute({
     app: userApp,
     updateUserUseCase: new UpdateUserUseCase(userRepository),
+  });
+  deleteUserRoute({
+    app: userApp,
+    deleteUserUseCase: new DeleteUserUseCase(userRepository),
   });
 
   return userApp;
