@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 
 import type { ReadTodoUseCase } from '../../../usecase/todo/read-todo.use-case.js';
-import { TodoRequestSchema, TodoResponseSchema } from './todo.schema.js';
+import { TodoListResponseSchema, TodoRequestSchema } from './todo.schema.js';
 
 const route = createRoute({
   method: 'get',
@@ -14,7 +14,7 @@ const route = createRoute({
       description: 'Todos retrieved successfully',
       content: {
         'application/json': {
-          schema: z.array(TodoResponseSchema),
+          schema: TodoListResponseSchema,
         },
       },
     },
@@ -39,23 +39,26 @@ export const readTodoRoute = ({
   readTodoUseCase: ReadTodoUseCase;
 }) => {
   app.openapi(route, async (c) => {
-    const { userId, limit, page, title } = c.req.valid('query');
-    const todos = await readTodoUseCase.execute({
+    const { userId, limit, cursor, title } = c.req.valid('query');
+    const { todos, nextCursor } = await readTodoUseCase.execute({
       userId,
       limit,
-      page,
+      cursor,
       title,
     });
 
     return c.json(
-      todos.map((todo) => ({
-        id: todo.id,
-        title: todo.title,
-        userId: todo.userId,
-        status: todo.status,
-        priority: todo.priority,
-        updatedAt: todo.updatedAt.toISOString(),
-      })),
+      {
+        todos: todos.map((todo) => ({
+          id: todo.id,
+          title: todo.title,
+          userId: todo.userId,
+          status: todo.status,
+          priority: todo.priority,
+          updatedAt: todo.updatedAt.toISOString(),
+        })),
+        nextCursor,
+      },
       200,
     );
   });

@@ -58,6 +58,7 @@ describe('read-todo', () => {
       },
     });
     updatedAt = todo.updatedAt;
+
     nextTodoId = ulid();
     await prisma.todo.create({
       data: {
@@ -68,6 +69,7 @@ describe('read-todo', () => {
         priority: 5,
       },
     });
+
     otherTodoId = ulid();
     await prisma.todo.create({
       data: {
@@ -92,14 +94,12 @@ describe('read-todo', () => {
     await prisma.$disconnect();
   });
 
-  it('【正常系】Todoをオブジェクトの配列で取得する', async () => {
-    const app = createApp(prisma);
-
-    const response = await app.request(`/todos?userId=${userId}`);
+  it('【正常系】指定したUserのTodoを取得する', async () => {
+    const response = await createApp(prisma).request(`/todos?userId=${userId}`);
+    const body = (await response.json()) as { todos: unknown[] };
 
     expect(response.status).toBe(200);
-    const body: unknown = await response.json();
-    expect(body).toEqual(
+    expect(body.todos).toEqual(
       expect.arrayContaining([
         {
           id: todoId,
@@ -111,20 +111,19 @@ describe('read-todo', () => {
         },
       ]),
     );
-    expect(body).not.toEqual(
+    expect(body.todos).not.toEqual(
       expect.arrayContaining([expect.objectContaining({ id: otherTodoId })]),
     );
   });
 
   it('【正常系】titleで部分一致検索したTodoを取得する', async () => {
-    const app = createApp(prisma);
-
-    const response = await app.request(
+    const response = await createApp(prisma).request(
       `/todos?userId=${userId}&title=${todoId}`,
     );
+    const body = (await response.json()) as { todos: unknown[] };
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual([
+    expect(body.todos).toEqual([
       expect.objectContaining({
         id: todoId,
         title,
@@ -132,23 +131,36 @@ describe('read-todo', () => {
     ]);
   });
 
-  it('【正常系】pageとページサイズを指定してTodoを取得する', async () => {
-    const app = createApp(prisma);
-    const [expectedTodo] = await prisma.todo.findMany({
+  it('【正常系】カーソルを使って次のページのTodoを取得する', async () => {
+    const expectedTodos = await prisma.todo.findMany({
       where: { userId },
       orderBy: { id: 'asc' },
-      skip: 1,
-      take: 1,
+      take: 2,
     });
-
-    const response = await app.request(
-      `/todos?userId=${userId}&limit=1&page=2`,
+    const app = createApp(prisma);
+    const response = await app.request(`/todos?userId=${userId}&limit=1`);
+    const firstPage = (await response.json()) as {
+      todos: { id: string }[];
+      nextCursor?: string;
+    };
+    const nextResponse = await app.request(
+      `/todos?userId=${userId}&limit=1&cursor=${firstPage.nextCursor}`,
     );
+    const nextPage = (await nextResponse.json()) as {
+      todos: { id: string }[];
+      nextCursor?: string;
+    };
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual([
-      expect.objectContaining({ id: expectedTodo?.id }),
+    expect(firstPage.todos).toEqual([
+      expect.objectContaining({ id: expectedTodos[0]?.id }),
     ]);
+    expect(firstPage.nextCursor).toBe(expectedTodos[0]?.id);
+    expect(nextResponse.status).toBe(200);
+    expect(nextPage.todos).toEqual([
+      expect.objectContaining({ id: expectedTodos[1]?.id }),
+    ]);
+    expect(nextPage.nextCursor).toBeUndefined();
   });
 
   // PostgreSQLにはSELECTトリガーがないため、テーブル名を一時的に変更して取得エラーを再現する

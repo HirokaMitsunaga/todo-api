@@ -1,8 +1,14 @@
 import type {
   TodoQueryService,
-  ReadTodosInput,
-  TodoReadModel,
+  FindTodosOutput,
 } from '../../todo/todo-query-service.interface.js';
+
+export type ReadTodosInput = {
+  userId: string;
+  limit: number;
+  cursor?: string;
+  title?: string;
+};
 
 export class ReadTodoUseCase {
   constructor(private readonly todoQueryService: TodoQueryService) {}
@@ -10,13 +16,13 @@ export class ReadTodoUseCase {
   async execute({
     userId,
     limit,
-    page,
+    cursor,
     title,
-  }: ReadTodosInput): Promise<TodoReadModel[]> {
+  }: ReadTodosInput): Promise<FindTodosOutput> {
     return await this.todoQueryService.findAllByUser({
       userId,
       limit,
-      offset: (page - 1) * limit,
+      cursor,
       title,
     });
   }

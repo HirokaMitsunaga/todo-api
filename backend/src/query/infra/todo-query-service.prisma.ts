@@ -2,7 +2,7 @@ import type { PrismaClient } from '@prisma/client';
 import type {
   TodoQueryService,
   FindTodosInput,
-  TodoReadModel,
+  FindTodosOutput,
 } from '../todo/todo-query-service.interface.js';
 
 export class TodoQueryServicePrisma implements TodoQueryService {
@@ -11,12 +11,17 @@ export class TodoQueryServicePrisma implements TodoQueryService {
   async findAllByUser({
     userId,
     limit,
-    offset,
+    cursor,
     title,
-  }: FindTodosInput): Promise<TodoReadModel[]> {
+  }: FindTodosInput): Promise<FindTodosOutput> {
     const todos = await this.prisma.todo.findMany({
-      take: limit,
-      skip: offset,
+      take: limit + 1,
+      ...(cursor
+        ? {
+            cursor: { id: cursor },
+            skip: 1,
+          }
+        : {}),
       where: {
         userId,
         ...(title
@@ -40,6 +45,12 @@ export class TodoQueryServicePrisma implements TodoQueryService {
       },
     });
 
-    return todos;
+    const hasNextPage = todos.length > limit;
+    const pageTodos = hasNextPage ? todos.slice(0, limit) : todos;
+
+    return {
+      todos: pageTodos,
+      nextCursor: hasNextPage ? pageTodos.at(-1)?.id : undefined,
+    };
   }
 }
