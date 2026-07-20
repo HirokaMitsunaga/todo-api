@@ -27,6 +27,20 @@ export class TodoRepositoryPrisma implements ITodoRepository {
     });
   }
 
+  async findAll(): Promise<Todo[]> {
+    const todoEntities = await this.prisma.todo.findMany();
+
+    return todoEntities.map((todoEntity) =>
+      Todo.reconstruct({
+        id: EntityId.reconstruct({ entityId: todoEntity.id }),
+        title: TitleVO.reconstruct(todoEntity.title),
+        status: todoEntity.status,
+        userId: EntityId.reconstruct({ entityId: todoEntity.userId }),
+        priority: PriorityVO.reconstruct(todoEntity.priority),
+      }),
+    );
+  }
+
   async create({ todo }: { todo: Todo }): Promise<void> {
     try {
       await this.prisma.todo.create({
