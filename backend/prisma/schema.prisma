@@ -16,7 +16,7 @@ model Todo {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
-  @@index([userId])
+  @@index([userId, id])
 }
 
 model User {
